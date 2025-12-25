@@ -27,4 +27,9 @@ class Supplier extends Model
     {
         return $this->hasMany(PurchaseOrder::class);
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\SupplierFactory::new();
+    }
 }

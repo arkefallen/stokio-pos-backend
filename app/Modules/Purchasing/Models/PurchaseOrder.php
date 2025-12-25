@@ -60,4 +60,9 @@ class PurchaseOrder extends Model
     {
         return $this->items->sum('subtotal');
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\PurchaseOrderFactory::new();
+    }
 }

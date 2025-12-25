@@ -22,8 +22,8 @@ class SupplierController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->string('search');
-            $query->where('name', 'ilike', "%{$search}%")
-                ->orWhere('contact_person', 'ilike', "%{$search}%");
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('contact_person', 'like', "%{$search}%");
         }
 
         $suppliers = $query->orderBy('name')->paginate($request->integer('per_page', 15));

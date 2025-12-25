@@ -32,4 +32,9 @@ class PurchaseOrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\PurchaseOrderItemFactory::new();
+    }
 }

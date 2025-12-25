@@ -57,6 +57,7 @@ class PurchaseOrderController extends Controller
     public function store(StorePurchaseOrderRequest $request, CreatePurchaseOrder $action): JsonResponse
     {
         $po = $action->execute($request->validated(), $request->user()->id);
+        $po->load(['supplier']);
 
         return response()->json([
             'message' => 'Purchase Order created successfully.',
