@@ -31,6 +31,16 @@
         <testsuite name="Catalog-Unit">
             <directory>tests/Unit/Catalog</directory>
         </testsuite>
+        <testsuite name="Purchasing">
+            <directory>tests/Feature/Purchasing</directory>
+            <directory>tests/Unit/Purchasing</directory>
+        </testsuite>
+        <testsuite name="Purchasing-Feature">
+            <directory>tests/Feature/Purchasing</directory>
+        </testsuite>
+        <testsuite name="Purchasing-Unit">
+            <directory>tests/Unit/Purchasing</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
