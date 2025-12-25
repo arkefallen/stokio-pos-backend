@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # PHP Application Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stokio-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - stokio-network
+    depends_on:
+      - postgres
+      - redis
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: stokio-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - stokio-network
+    depends_on:
+      - app
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: stokio-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-stokio}
+      POSTGRES_USER: ${DB_USERNAME:-stokio}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - stokio-postgres-data:/var/lib/postgresql/data
+    networks:
+      - stokio-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: stokio-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - stokio-redis-data:/data
+    networks:
+      - stokio-network
+
+  # MinIO S3-Compatible Storage
+  minio:
+    image: minio/minio:latest
+    container_name: stokio-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - stokio-minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - stokio-network
+
+networks:
+  stokio-network:
+    driver: bridge
+
+volumes:
+  stokio-postgres-data:
+    driver: local
+  stokio-redis-data:
+    driver: local
+  stokio-minio-data:
+    driver: local
