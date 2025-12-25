@@ -41,6 +41,16 @@
         <testsuite name="Purchasing-Unit">
             <directory>tests/Unit/Purchasing</directory>
         </testsuite>
+        <testsuite name="Sales">
+            <directory>tests/Feature/Sales</directory>
+            <directory>tests/Unit/Sales</directory>
+        </testsuite>
+        <testsuite name="Sales-Feature">
+            <directory>tests/Feature/Sales</directory>
+        </testsuite>
+        <testsuite name="Sales-Unit">
+            <directory>tests/Unit/Sales</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>
@@ -52,7 +62,7 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="DB_CONNECTION" value="mysql"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_HOST" value="localhost"/>
         <env name="DB_PORT" value="3306"/>
         <env name="DB_DATABASE" value="stokio_test"/>
         <env name="DB_USERNAME" value="root"/>
