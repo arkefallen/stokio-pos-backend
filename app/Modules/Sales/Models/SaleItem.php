@@ -36,4 +36,9 @@ class SaleItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\SaleItemFactory::new();
+    }
 }

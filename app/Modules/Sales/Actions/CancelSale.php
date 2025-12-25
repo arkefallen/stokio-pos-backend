@@ -27,8 +27,14 @@ class CancelSale
                 // Lock product to prevent race conditions
                 $product = Product::lockForUpdate()->find($item->product_id);
                 if ($product) {
-                    $product->stock_qty += $item->quantity;
-                    $product->save();
+                    // Restore Stock via Inventory Action
+                    (new \App\Modules\Inventory\Actions\AdjustStock)->execute(
+                        $product,
+                        $item->quantity, // Positive to add back
+                        \App\Modules\Inventory\Models\StockMovement::TYPE_SALE_CANCEL,
+                        $sale,
+                        $userId // This variable was missing in scoping before, good thing I fixed it
+                    );
                 }
             }
 

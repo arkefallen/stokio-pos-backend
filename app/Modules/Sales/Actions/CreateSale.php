@@ -26,12 +26,13 @@ class CreateSale
             $count = Sale::whereDate('created_at', today())->count() + 1;
             $saleNumber = 'TRX-' . $date . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-            // 2. Validate Items & Stock (with Locking)
+            // 2. Validate Items & Stock (Locking Phase)
             $itemsData = collect($data['items'])->sortBy('product_id');
 
             $subtotal = 0;
-            $saleItems = [];
+            $saleItemsData = []; // Store prepared data
 
+            // Phase 1: Lock & Validate
             foreach ($itemsData as $item) {
                 $product = Product::lockForUpdate()->find($item['product_id']);
 
@@ -39,15 +40,12 @@ class CreateSale
                     throw new \Exception("Product ID {$item['product_id']} not found.");
                 }
 
+                // Validation only (Deduction later via AdjustStock)
                 if ($product->stock_qty < $item['quantity']) {
                     throw new StockInsufficiencyException(
                         "Insufficient stock for product '{$product->name}'. Available: {$product->stock_qty}, Requested: {$item['quantity']}"
                     );
                 }
-
-                // Deduct Stock
-                $product->stock_qty -= $item['quantity'];
-                $product->save();
 
                 // Snapshot price/cost
                 $price = $product->price;
@@ -56,8 +54,8 @@ class CreateSale
 
                 $subtotal += $itemSubtotal;
 
-                $saleItems[] = [
-                    'product' => $product,
+                $saleItemsData[] = [
+                    'product_instance' => $product, // Keep instance to persist lock
                     'quantity' => $item['quantity'],
                     'price' => $price,
                     'cost_price' => $cost,
@@ -101,13 +99,22 @@ class CreateSale
                 'created_by' => $userId,
             ]);
 
-            // 5. Create Sale Items
-            foreach ($saleItems as $item) {
+            // 5. Create Sale Items & Deduct Stock (Phase 2)
+            foreach ($saleItemsData as $item) {
+                // Deduct Stock via Inventory Action
+                (new \App\Modules\Inventory\Actions\AdjustStock)->execute(
+                    $item['product_instance'],
+                    -$item['quantity'], // Negative for deduction
+                    \App\Modules\Inventory\Models\StockMovement::TYPE_SALE,
+                    $sale,
+                    $userId
+                );
+
                 SaleItem::create([
                     'sale_id' => $sale->id,
-                    'product_id' => $item['product']->id,
-                    'product_name' => $item['product']->name,
-                    'product_sku' => $item['product']->sku,
+                    'product_id' => $item['product_instance']->id,
+                    'product_name' => $item['product_instance']->name,
+                    'product_sku' => $item['product_instance']->sku,
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'cost_price' => $item['cost_price'] ?? 0,

@@ -59,4 +59,9 @@ class Sale extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\SaleFactory::new();
+    }
 }

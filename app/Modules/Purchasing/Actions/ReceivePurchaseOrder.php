@@ -39,15 +39,19 @@ class ReceivePurchaseOrder
             // Update Stock
             foreach ($po->items as $item) {
                 $product = Product::lockForUpdate()->find($item->product_id);
-
                 if ($product) {
-                    $product->stock_qty += $item->quantity;
-
-                    // Update cost price to the new purchase price (Last Purchase Price)
-                    // Alternatively, we could implement Moving Average Costing here
+                    // Update Cost Price (Last Purchase Price)
                     $product->cost_price = $item->unit_cost;
+                    // Note: Product is saved inside AdjustStock action
 
-                    $product->save();
+                    // Increment Stock & Log Movement
+                    (new \App\Modules\Inventory\Actions\AdjustStock)->execute(
+                        $product,
+                        $item->quantity,
+                        \App\Modules\Inventory\Models\StockMovement::TYPE_PURCHASE,
+                        $po,
+                        $userId
+                    );
                 }
             }
 
