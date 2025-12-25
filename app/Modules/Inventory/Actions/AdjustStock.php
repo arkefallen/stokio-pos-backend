@@ -31,6 +31,9 @@ class AdjustStock
         // Validation for deduction
         if ($quantityChange < 0 && $product->stock_qty + $quantityChange < 0) {
             throw new StockInsufficiencyException(
+                $product->id,
+                abs($quantityChange),
+                $product->stock_qty,
                 "Insufficient stock for product '{$product->name}'. Available: {$product->stock_qty}, Deducting: " . abs($quantityChange)
             );
         }
