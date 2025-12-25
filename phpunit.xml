@@ -21,6 +21,16 @@
         <testsuite name="Auth-Unit">
             <directory>tests/Unit/Auth</directory>
         </testsuite>
+        <testsuite name="Catalog">
+            <directory>tests/Feature/Catalog</directory>
+            <directory>tests/Unit/Catalog</directory>
+        </testsuite>
+        <testsuite name="Catalog-Feature">
+            <directory>tests/Feature/Catalog</directory>
+        </testsuite>
+        <testsuite name="Catalog-Unit">
+            <directory>tests/Unit/Catalog</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

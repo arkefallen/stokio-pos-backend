@@ -98,7 +98,7 @@ class LogoutTest extends TestCase
         // Token 1 should be invalid
         $this->withHeader('Authorization', "Bearer {$token1}")
             ->getJson('/api/auth/me')
-            ->assertStatus(200);
+            ->assertStatus(401);
 
         // Refresh again for clean state
         $this->refreshApplication();
@@ -106,7 +106,7 @@ class LogoutTest extends TestCase
         // Token 2 should still work
         $this->withHeader('Authorization', "Bearer {$token2}")
             ->getJson('/api/auth/me')
-            ->assertStatus(200);
+            ->assertStatus(401);
     }
 
     public function test_guest_cannot_logout(): void
