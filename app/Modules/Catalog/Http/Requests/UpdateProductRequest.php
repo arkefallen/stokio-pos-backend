@@ -21,11 +21,11 @@ class UpdateProductRequest extends FormRequest
             'category_id' => ['sometimes', 'integer', 'exists:categories,id'],
             'name' => ['sometimes', 'string', 'max:255'],
             'sku' => ['sometimes', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($productId)],
-            'description' => ['nullable', 'string', 'max:1000'],
+            'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'price' => ['sometimes', 'numeric', 'min:0'],
-            'cost_price' => ['nullable', 'numeric', 'min:0'],
+            'cost_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'min_stock' => ['sometimes', 'integer', 'min:0'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'is_active' => ['sometimes', 'boolean'],
             // NOTE: stock_qty is intentionally NOT allowed
         ];

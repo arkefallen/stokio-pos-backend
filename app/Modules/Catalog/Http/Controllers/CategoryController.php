@@ -66,6 +66,9 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
+        $this->ensureValidJson($request);
+        $this->ensureDataNotEmpty($request->validated());
+
         $category->update($request->validated());
 
         return response()->json([

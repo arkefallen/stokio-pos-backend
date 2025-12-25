@@ -57,21 +57,10 @@ class SupplierController extends Controller
 
     public function update(UpdateSupplierRequest $request, Supplier $supplier): JsonResponse
     {
-        // 1. Check for Invalid JSON (Content exists but parsed input is empty)
-        if (!empty($request->getContent()) && empty($request->all())) {
-            return response()->json([
-                'message' => 'Invalid JSON format. Please check for trailing commas or syntax errors.',
-            ], 400);
-        }
+        $this->ensureValidJson($request);
 
         $data = $request->validated();
-
-        // 2. Check if there is any data to update
-        if (empty($data)) {
-            return response()->json([
-                'message' => 'No valid data provided for update.',
-            ], 422);
-        }
+        $this->ensureDataNotEmpty($data);
 
         $supplier->update($data);
 

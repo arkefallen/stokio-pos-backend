@@ -111,6 +111,13 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product, UpdateProduct $action): JsonResponse
     {
+        $this->ensureValidJson($request);
+        // Note: For Products, we don't strictly enforce ensureDataNotEmpty() here 
+        // because sometimes the action handles complex logic or file-only updates.
+        // But UpdateProduct request rules are 'sometimes', so empty data would be no-op.
+        // It's safer to ensure something was passed.
+        $this->ensureDataNotEmpty($request->validated() + ($request->hasFile('image') ? ['image' => true] : []));
+
         $product = $action->execute(
             $product,
             $request->validated(),
