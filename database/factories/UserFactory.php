@@ -2,15 +2,21 @@
 
 namespace Database\Factories;
 
+use App\Modules\Auth\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Modules\Auth\Models\User>
  */
 class UserFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     */
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */
@@ -29,6 +35,9 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => User::ROLE_CASHIER,
+            'is_active' => true,
+            'last_login_at' => null,
         ];
     }
 
@@ -37,8 +46,48 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Create an admin user.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => User::ROLE_ADMIN,
+        ]);
+    }
+
+    /**
+     * Create a manager user.
+     */
+    public function manager(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => User::ROLE_MANAGER,
+        ]);
+    }
+
+    /**
+     * Create a cashier user.
+     */
+    public function cashier(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => User::ROLE_CASHIER,
+        ]);
+    }
+
+    /**
+     * Create an inactive user.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_active' => false,
         ]);
     }
 }

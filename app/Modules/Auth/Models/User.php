@@ -35,6 +35,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'last_login_at',
     ];
 
     /**
@@ -113,5 +114,13 @@ class User extends Authenticatable
     public function scopeByRole($query, string $role)
     {
         return $query->where('role', $role);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
     }
 }
