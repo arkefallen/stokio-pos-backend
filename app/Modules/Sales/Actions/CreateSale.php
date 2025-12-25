@@ -43,6 +43,9 @@ class CreateSale
                 // Validation only (Deduction later via AdjustStock)
                 if ($product->stock_qty < $item['quantity']) {
                     throw new StockInsufficiencyException(
+                        $product->id,
+                        $item['quantity'],
+                        $product->stock_qty,
                         "Insufficient stock for product '{$product->name}'. Available: {$product->stock_qty}, Requested: {$item['quantity']}"
                     );
                 }
