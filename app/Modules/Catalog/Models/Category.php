@@ -35,4 +35,9 @@ class Category extends Model
     {
         return $query->where('is_active', true);
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\CategoryFactory::new();
+    }
 }

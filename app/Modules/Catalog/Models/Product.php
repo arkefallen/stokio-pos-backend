@@ -97,4 +97,9 @@ class Product extends Model
     {
         return $this->stock_qty > 0;
     }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProductFactory::new();
+    }
 }
