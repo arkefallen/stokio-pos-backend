@@ -40,7 +40,7 @@ type User = {
 }
 
 export default function UserList() {
-    const [users, setUsers] = useState<User[]>([
+    const [users] = useState<User[]>([
         { id: 1, name: "Admin User", email: "admin@stokio.com", role: 'admin', status: 'active', lastLogin: '2025-12-25 10:00 AM' },
         { id: 2, name: "Store Manager", email: "manager@stokio.com", role: 'manager', status: 'active', lastLogin: '2025-12-24 05:30 PM' },
         { id: 3, name: "John Cashier", email: "john@stokio.com", role: 'cashier', status: 'active', lastLogin: '2025-12-25 08:00 AM' },

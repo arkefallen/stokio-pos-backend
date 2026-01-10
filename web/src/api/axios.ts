@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '@/stores/use-auth-store';
 
 // Default to standard Laravel API URL if not set
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const baseURL = import.meta.env.VITE_API_URL
 
 const api = axios.create({
     baseURL,

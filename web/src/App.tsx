@@ -24,9 +24,13 @@ import StockOpname from '@/features/inventory/stock-opname'
 import SalesHistory from '@/features/sales/sales-history'
 import UserList from '@/features/users/user-list'
 
+import { Toaster } from "@/components/ui/sonner"
+import { LoadingSpinner } from "@/components/common/loading-spinner"
+
 function App() {
   return (
     <BrowserRouter>
+      <Toaster />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/*" element={<ProtectedRoutes />} />
@@ -36,8 +40,14 @@ function App() {
 }
 
 function ProtectedRoutes() {
-  const { isAuthenticated } = useAuthStore()
+  const { isAuthenticated, isHydrated } = useAuthStore()
 
+  // Wait for Zustand to load state from localStorage before deciding
+  if (!isHydrated) {
+    return <LoadingSpinner />
+  }
+
+  // Now we can safely check authentication
   if (!isAuthenticated()) {
     return <Navigate to="/login" replace />
   }

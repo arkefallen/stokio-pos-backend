@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { toast } from "sonner"
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -61,28 +62,25 @@ export default function LoginPage() {
         setLoading(true)
         setError('')
         try {
-            // Mock Login (Bypassing real API as requested)
-            // const response = await api.post('/auth/login', data)
-            // const { token, user } = response.data
+            // Real API Call
+            const response = await api.post('/auth/login', data)
+            // Laravel returns: { message, data: { user, token, token_type } }
+            const { user, token } = response.data.data
 
-            await new Promise(r => setTimeout(r, 1000)) // Simulate network delay
-
-            if (data.email === "error@stokio.com") {
-                throw new Error("Mock error")
-            }
-
-            const mockUser = {
-                id: 1,
-                name: "Admin User",
-                email: data.email,
-                role: "admin"
-            }
-
-            login("mock-token-xyz-123", mockUser)
-            navigate('/')
+            login(token, user)
+            toast.success("Welcome back!", {
+                description: `Signed in as ${user.name}`
+            })
+            navigate('/', { replace: true })
         } catch (err: any) {
             console.error(err)
-            setError('Invalid credentials (mock). Try any email except error@stokio.com')
+            if (err.response?.status === 401) {
+                setError('Invalid credentials.')
+                toast.error("Login failed", { description: "Invalid email or password" })
+            } else {
+                setError('Something went wrong. Please try again.')
+                toast.error("Error", { description: "Could not connect to server" })
+            }
         } finally {
             setLoading(false)
         }
